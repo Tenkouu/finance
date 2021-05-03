@@ -1,12 +1,11 @@
 // Дэлгэцтэй ажиллах контроллер
 var uiController = (function() {
-
     var DOMstrings = {
         inputType: ".add__type",
         inputDescription: ".add__description",
         inputValue: ".add__value",
         addBtn: ".add__btn",
-    }
+    };
 
     return {
         getInput: function(){
@@ -19,7 +18,7 @@ var uiController = (function() {
 
         getDOMstrings: function(){
             return DOMstrings;
-        }
+        },
     };
 })();
 
@@ -28,9 +27,6 @@ var financeController = (function() {})();
 
 // Програмын холбогч контроллер
 var appController = (function(uiController, financeController) {
-
-    var DOM = uiController.getDOMstrings();
-
     var ctrlAddItem = function() {
         // 1. Оруулах өгөгдлийг дэлгэцээс олж авна.
         console.log(uiController.getInput());
@@ -40,13 +36,27 @@ var appController = (function(uiController, financeController) {
         // 5. Эцсийн үлдэгдэл, тооцоог дэлгэцэнд гаргана.
     };
 
-    document.querySelector(DOM.addBtn).addEventListener("click", function() {
-        ctrlAddItem();
-    });
+    var setupEventListeners = function(){
+        var DOM = uiController.getDOMstrings();
 
-    document.addEventListener("keypress", function(event) {
-        if (event.keyCode === 13 || event.which === 13) {
-        ctrlAddItem();
+        document.querySelector(DOM.addBtn).addEventListener("click", function() {
+            ctrlAddItem();
+        });
+    
+        document.addEventListener("keypress", function(event) {
+            if (event.keyCode === 13 || event.which === 13) {
+            ctrlAddItem();
+            }
+        });
+    };
+
+    return {
+        init: function(){
+            console.log('Application Started.');
+            setupEventListeners();
         }
-    });
+    };
+
 })(uiController, financeController);
+
+appController.init();
