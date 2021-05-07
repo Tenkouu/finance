@@ -4,56 +4,43 @@ var uiController = (function() {
         inputType: ".add__type",
         inputDescription: ".add__description",
         inputValue: ".add__value",
-        addBtn: ".add__btn",
+        addBtn: ".add__btn"
     };
 
     return {
         getInput: function(){
             return {
-                type: document.querySelector(DOMstrings.inputType).value,
+                type: document.querySelector(DOMstrings.inputType).value, // exp, inc
                 description: document.querySelector(DOMstrings.inputDescription).value,
-                value: document.querySelector(DOMstrings.inputValue).value,
+                value: document.querySelector(DOMstrings.inputValue).value
             };
         },
 
         getDOMstrings: function(){
             return DOMstrings;
-        },
+        }
     };
 })();
 
 // Санхүүтэй ажиллах контроллер
 var financeController = (function() {
+    // Private Data
     var Income = function(id, description, value) {
         this.id = id;
         this.description = description;
         this.value = value;
     };
 
+    // Private Data
     var Expense = function(id, description, value) {
         this.id = id;
         this.description = description;
         this.value = value;
     };
 
-    var i1 = new Income(1, 'Цалин', 2500000);
-    var i2 = new Income(1, 'Сугалаа хожсон', 250000000);
-
-    // console.log(i1);
-    // console.log(i2);
-
-    var incomes = [];
-    var expenses = [];
-
-    incomes.push(i1);
-    incomes.push(i2);
-
-    // console.log(incomes);
-
-    console.log(incomes[1].value)
-
+    // Private Data
     var data = {
-        allItems: {
+        items: {
             inc: [],
             exp: []
         },
@@ -63,18 +50,41 @@ var financeController = (function() {
             exp: 0
         }
     };
-    
-    data.allItems.inc.push(i1);
 
-    console.log(data.allItems.inc[0]);
+    return {
+        addItem: function(type, desc, val){
+            var item, id;
+
+            if(data.items[type].length === 0){
+                id = 1;
+            } else {
+                id = data.items[type][data.items[type].length - 1].id + 1;
+            }
+
+            if(type === 'inc'){
+                item = new Income(id, desc, val);
+            } else {
+                item = new Expense(id, desc, val);
+            }
+            data.items[type].push(item);
+        },
+
+        seeData: function(){
+            return data;
+        }
+    };
+
 })();
 
 // Програмын холбогч контроллер
 var appController = (function(uiController, financeController) {
     var ctrlAddItem = function() {
         // 1. Оруулах өгөгдлийг дэлгэцээс олж авна.
-        console.log(uiController.getInput());
+        var input = uiController.getInput();
+
         // 2. Олж авсан өгөгдлүүдээ санхүүгийн контроллерт дамжуулж тэнд хадгална.
+        financeController.addItem(input.type, input.description, input.value);
+
         // 3. Олж авсан өгөгдлүүдээ вэб дээрээ тохирох хэсэгт нь гаргана
         // 4. Төсвийг тооцоолно
         // 5. Эцсийн үлдэгдэл, тооцоог дэлгэцэнд гаргана.
