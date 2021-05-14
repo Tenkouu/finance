@@ -103,7 +103,20 @@ var financeController = (function() {
         totals: {
             inc: 0,
             exp: 0
-        }
+        },
+
+        budget: 0, // tusuv: 0,
+
+        percent: 0 // huvi: 0
+    };
+
+    var calculateTotal = function(type){
+        var sum = 0;
+        data.items[type].forEach(function(el) {
+            sum = sum + el.value;
+        });
+
+        data.totals[type] = sum;
     };
 
     return {
@@ -128,6 +141,29 @@ var financeController = (function() {
 
         seeData: function(){
             return data;
+        },
+
+        calculateBudget: function(){
+            // Нийт орлогийн нийлбэрийн тооцолно.
+            calculateTotal('inc');
+
+            // Нийт зарлагын нийлбэрийг тооцоолно.
+            calculateTotal('exp');
+
+            // Төсвийг шинээр тооцоолно.
+            data.budget = data.totals.inc - data.totals.exp;
+
+            // Орлого зарлагын хувийг тооцоолно
+            data.percent = Math.round((data.totals.exp / data.totals.inc) * 100);
+        },
+
+        getBudget: function(){
+            return {
+                budget: data.budget,
+                percent: data.percent,
+                totalInc: data.totals.inc,
+                totalExp: data.totals.exp
+            };
         }
     };
 
@@ -143,12 +179,18 @@ var appController = (function(uiController, financeController) {
             // 2. Олж авсан өгөгдлүүдээ санхүүгийн контроллерт дамжуулж тэнд хадгална.
             var item = financeController.addItem(input.type, input.description, input.value);
 
-            // 3. Олж авсан өгөгдлүүдээ вэб дээрээ тохирох хэсэгт нь гаргана
+            // 3. Олж авсан өгөгдлүүдээ вэб дээрээ тохирох хэсэгт нь гаргана.
             uiController.addListItem(item, input.type);
             uiController.clearFields();
 
-            // 4. Төсвийг тооцоолно
-            // 5. Эцсийн үлдэгдэл, тооцоог дэлгэцэнд гаргана.
+            // 4. Төсвийг тооцоолно.
+            financeController.calculateBudget(); // financeController.tusuvTootsooloh();
+
+            // 5. Эцсийн үлдэгдэл, тооцоо.
+            var budget = financeController.getBudget(); // var tusuv = financeController.tusviigAvah();
+            
+            // 6. Төсвийн тооцоог дэлгэцэнд гаргана.
+            console.log(budget);
         };
     };
 
